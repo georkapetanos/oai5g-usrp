@@ -1,0 +1,26 @@
+FROM ubuntu:jammy
+
+ENV WORKING_DIRECTORY /tmp/openairinterface5g
+ENV PROJECT_DIRECTORY /softmodem-oai
+ENV DEBIAN_FRONTEND noninteractive
+
+SHELL ["/bin/bash", "-c"]
+
+RUN apt-get update && \
+		apt-get install -y \
+			git \
+			sudo && \
+	apt-get clean
+
+RUN mkdir -p /tmp/openairinterface5g
+RUN cd /tmp && git clone https://gitlab.eurecom.fr/oai/openairinterface5g.git
+WORKDIR $WORKING_DIRECTORY
+#RUN git checkout master
+#RUN source oaienv
+RUN cd cmake_targets && ./build_oai -I -w USRP --eNB --UE --nrUE --gNB
+RUN mkdir -p $PROJECT_DIRECTORY
+COPY . /softmodem-oai
+RUN ls /
+RUN ls /softmodem-oai
+RUN pwd
+RUN ls
